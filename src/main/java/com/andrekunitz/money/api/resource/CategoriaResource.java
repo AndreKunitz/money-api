@@ -2,9 +2,7 @@ package com.andrekunitz.money.api.resource;
 
 import com.andrekunitz.money.api.model.Categoria;
 import com.andrekunitz.money.api.repository.CategoriaRepository;
-import org.aspectj.bridge.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
