@@ -3,6 +3,7 @@ package com.andrekunitz.money.api.resource;
 import com.andrekunitz.money.api.event.RecursoCriadoEvent;
 import com.andrekunitz.money.api.model.Pessoa;
 import com.andrekunitz.money.api.repository.PessoaRepository;
+import com.andrekunitz.money.api.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,9 @@ public class PessoaResource {
     @Autowired
     ApplicationEventPublisher publisher;
 
+    @Autowired
+    PessoaService pessoaService;
+
     @PostMapping
     public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa novaPessoa, HttpServletResponse response) {
         Pessoa pessoaSalva = pessoaRepository.save(novaPessoa);
@@ -48,6 +52,12 @@ public class PessoaResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long codigo) {
         pessoaRepository.deleteById(codigo);
+    }
+
+    @PutMapping("/{codigo}")
+    public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
+        Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
+        return ResponseEntity.ok(pessoaSalva);
     }
 
 }
