@@ -57,6 +57,23 @@
 			<artifactId>flyway-core</artifactId>
 		</dependency>
 
+		<!-- Hibernate para Java 8 -> suporte à coversão de LocalDate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-java8</artifactId>
+		</dependency>
+
+		<!-- Suporte do Jackson para LocalDAte do Java 8 -->
+		<dependency>
+			<groupId>com.fastermxl.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
 
 	</dependencies>
 
