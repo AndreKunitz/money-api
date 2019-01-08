@@ -4,6 +4,7 @@ import com.andrekunitz.money.api.event.RecursoCriadoEvent;
 import com.andrekunitz.money.api.exceptionhendler.MoneyExceptionHandler;
 import com.andrekunitz.money.api.model.Lancamento;
 import com.andrekunitz.money.api.repository.LancamentoRepository;
+import com.andrekunitz.money.api.repository.filter.LancamentoFilter;
 import com.andrekunitz.money.api.service.LancamentoService;
 import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaExcepton;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class LancamentoResource {
     MessageSource messageSource;
 
     @GetMapping
-    public List<Lancamento> listar() {
-        return lancamentoRepository.findAll();
+    public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
+        return lancamentoRepository.filtrar(lancamentoFilter);
     }
 
     @GetMapping("/{codigo}")
