@@ -1,6 +1,8 @@
 package com.andrekunitz.money.api.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -51,6 +53,10 @@ public class Pessoa {
     public boolean isAtivo() {
         return ativo;
     }
+
+    @JsonIgnore
+    @Transient
+    public boolean isInativo() { return !this.ativo; }
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
