@@ -75,7 +75,6 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     public static class Erro {
-
         private String menssagemUsuario;
         private String menssagemDesenvolvedor;
 
