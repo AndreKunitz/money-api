@@ -86,6 +86,11 @@
 			<version>2.0.1.RELEASE</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-ssecurity-jwt</artifactId>
+		</dependency>
+
 		<!-- Pacote de dependencias para o Security funcionar acima do Java 8 -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
