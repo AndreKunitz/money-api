@@ -39,12 +39,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("angular")
-                .secret(passwordEncoder.encode("angular"))
-                .authorizedGrantTypes("password", "refresh_token")
-                .scopes("read", "write")
-                .accessTokenValiditySeconds(20)
-                .refreshTokenValiditySeconds(3600 * 24);
+                    .withClient("angular")
+                    .secret(passwordEncoder.encode("angular"))
+                    .authorizedGrantTypes("password", "refresh_token")
+                    .scopes("read", "write")
+                    .accessTokenValiditySeconds(60)
+                    .refreshTokenValiditySeconds(3600 * 24)
+                .and()
+                    .withClient("mobile")
+                    .secret(passwordEncoder.encode("mobile"))
+                    .authorizedGrantTypes("password", "refresh_token")
+                    .scopes("read")
+                    .accessTokenValiditySeconds(60)
+                    .refreshTokenValiditySeconds(3600 * 24);
     }
 
     @Override
