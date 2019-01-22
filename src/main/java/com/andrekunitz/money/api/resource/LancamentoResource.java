@@ -5,6 +5,7 @@ import com.andrekunitz.money.api.exceptionhendler.MoneyExceptionHandler;
 import com.andrekunitz.money.api.model.Lancamento;
 import com.andrekunitz.money.api.repository.LancamentoRepository;
 import com.andrekunitz.money.api.repository.filter.LancamentoFilter;
+import com.andrekunitz.money.api.repository.projection.ResumoLancamento;
 import com.andrekunitz.money.api.service.LancamentoService;
 import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaExcepton;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class LancamentoResource {
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
     public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
         return lancamentoRepository.filtrar(lancamentoFilter, pageable);
+    }
+
+    @GetMapping(params = "resumo")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+    public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        return lancamentoRepository.resumir(lancamentoFilter, pageable);
     }
 
     @GetMapping("/{codigo}")
