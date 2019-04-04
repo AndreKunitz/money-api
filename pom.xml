@@ -136,6 +136,7 @@
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -148,6 +149,15 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>com.heroku.sdk</groupId>
+				<artifactId>heroku-maven-plugin</artifactId>
+				<configuration>
+					<processTypes>
+						<web>java -Dserver.port=$PORT -Dspring.profiles.active=prod $JAVA_OPTS -jar target/money-api*.jar</web>
+					</processTypes>
+				</configuration>
+			</plugin>
 
 		</plugins>
 	</build>
