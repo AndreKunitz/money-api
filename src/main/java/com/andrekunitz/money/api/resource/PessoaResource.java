@@ -6,6 +6,8 @@ import com.andrekunitz.money.api.repository.PessoaRepository;
 import com.andrekunitz.money.api.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,10 +24,10 @@ public class PessoaResource {
     @Autowired
     PessoaRepository pessoaRepository;
 
-    @GetMapping
+/*    @GetMapping
     public List<Pessoa> listar() {
         return pessoaRepository.findAll();
-    }
+    }*/
 
     @Autowired
     ApplicationEventPublisher publisher;
@@ -70,6 +72,12 @@ public class PessoaResource {
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
     public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
         pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+    public Page<Pessoa> pesquisar(@RequestParam(required = false, defaultValue = "%") String nome, Pageable pageable) {
+        return pessoaRepository.findByNomeContaining(nome, pageable);
     }
 
 }
