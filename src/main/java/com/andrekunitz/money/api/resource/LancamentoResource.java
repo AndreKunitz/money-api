@@ -7,7 +7,7 @@ import com.andrekunitz.money.api.repository.LancamentoRepository;
 import com.andrekunitz.money.api.repository.filter.LancamentoFilter;
 import com.andrekunitz.money.api.repository.projection.ResumoLancamento;
 import com.andrekunitz.money.api.service.LancamentoService;
-import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaExcepton;
+import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -69,8 +69,8 @@ public class LancamentoResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
     }
 
-    @ExceptionHandler({ PessoaInexistenteOuInativaExcepton.class })
-    public ResponseEntity<Object> handlePessoaInexistenteOuInativaExcepton(PessoaInexistenteOuInativaExcepton ex) {
+    @ExceptionHandler({ PessoaInexistenteOuInativaException.class })
+    public ResponseEntity<Object> handlePessoaInexistenteOuInativaExcepton(PessoaInexistenteOuInativaException ex) {
         String menssagemUsuario = messageSource.getMessage("pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale());
         String menssagemDesenvolvedor = ex.toString();
 
@@ -86,4 +86,14 @@ public class LancamentoResource {
         lancamentoRepository.deleteById(codigo);
     }
 
+    @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
+    public ResponseEntity<Lancamento> atualizar(@PathVariable Long codigo, @Valid @RequestBody Lancamento lancamento) {
+        try {
+            Lancamento lancamentoSalvo = lancamentoService.atualizar(codigo, lancamento);
+            return ResponseEntity.ok(lancamentoSalvo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
