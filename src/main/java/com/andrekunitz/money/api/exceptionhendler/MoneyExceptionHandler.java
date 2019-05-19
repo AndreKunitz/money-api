@@ -30,10 +30,10 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String menssagemUsuario = messageSource.getMessage("menssagem.invalida", null, LocaleContextHolder.getLocale());
-        String menssagemDesenvolvedor = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
+        String mensagemUsuario = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
 
-        List<Erro> erros = Arrays.asList(new Erro(menssagemUsuario, menssagemDesenvolvedor));
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
     }
 
@@ -46,18 +46,18 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({EmptyResultDataAccessException.class})
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
-        String menssagemUsuario = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
-        String menssagemDesenvolvedor = ex.toString();
-        List<Erro> erros = Arrays.asList(new Erro(menssagemUsuario, menssagemDesenvolvedor));
+        String mensagemUsuario = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
-        String menssagemUsuario = messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale());
-        String menssagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(menssagemUsuario, menssagemDesenvolvedor));
+        String mensagemUsuario = messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
@@ -66,29 +66,29 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler {
         List<Erro> erros = new ArrayList<>();
 
         for (FieldError fieldError : bidingResult.getFieldErrors()) {
-            String menssagemUsuario = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
-            String menssagemDesenvolvedor = fieldError.toString();
-            erros.add(new Erro(menssagemUsuario, menssagemDesenvolvedor));
+            String mensagemUsuario = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+            String mensagemDesenvolvedor = fieldError.toString();
+            erros.add(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         }
 
         return erros;
     }
 
     public static class Erro {
-        private String menssagemUsuario;
-        private String menssagemDesenvolvedor;
+        private String mensagemUsuario;
+        private String mensagemDesenvolvedor;
 
-        public Erro(String menssagemUsuario, String menssagemDesenvolvedor) {
-            this.menssagemUsuario = menssagemUsuario;
-            this.menssagemDesenvolvedor = menssagemDesenvolvedor;
+        public Erro(String mensagemUsuario, String mensagemDesenvolvedor) {
+            this.mensagemUsuario = mensagemUsuario;
+            this.mensagemDesenvolvedor = mensagemDesenvolvedor;
         }
 
-        public String getMenssagemUsuario() {
-            return menssagemUsuario;
+        public String getMensagemUsuario() {
+            return mensagemUsuario;
         }
 
-        public String getMenssagemDesenvolvedor() {
-            return menssagemDesenvolvedor;
+        public String getMensagemDesenvolvedor() {
+            return mensagemDesenvolvedor;
         }
     }
 }
