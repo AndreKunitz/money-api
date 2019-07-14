@@ -1,5 +1,6 @@
 package com.andrekunitz.money.api.repository.lancamento;
 
+import com.andrekunitz.money.api.dto.LancamentoEstatisticaCategoria;
 import com.andrekunitz.money.api.model.Lancamento;
 import com.andrekunitz.money.api.repository.filter.LancamentoFilter;
 import com.andrekunitz.money.api.repository.projection.ResumoLancamento;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,30 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
     @PersistenceContext
     private EntityManager manager;
+
+    @Override
+    public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia) {
+        CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
+        CriteriaQuery<LancamentoEstatisticaCategoria> criteriaQuery = criteriaBuilder.createQuery(LancamentoEstatisticaCategoria.class);
+        Root<Lancamento> root = criteriaQuery.from(Lancamento.class);
+
+        criteriaQuery.select(criteriaBuilder.construct(LancamentoEstatisticaCategoria.class,
+                root.get("categoria"),
+                criteriaBuilder.sum(root.get("valor"))));
+
+        LocalDate primeiroDia = mesReferencia.withDayOfMonth(1);
+        LocalDate ultimoDia = mesReferencia.withDayOfMonth(mesReferencia.lengthOfMonth());
+
+        criteriaQuery.where(
+                criteriaBuilder.greaterThanOrEqualTo(root.get("dataVencimento"), primeiroDia),
+                criteriaBuilder.lessThanOrEqualTo(root.get("dataVencimento"), ultimoDia));
+
+        criteriaQuery.groupBy(root.get("categoria"));
+
+        TypedQuery<LancamentoEstatisticaCategoria> typedQuery = manager.createQuery(criteriaQuery);
+
+        return typedQuery.getResultList();
+    }
 
     @Override
     public Page<Lancamento> filtrar(LancamentoFilter lancamentoFilter, Pageable pageable) {
