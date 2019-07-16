@@ -1,6 +1,7 @@
 package com.andrekunitz.money.api.resource;
 
 import com.andrekunitz.money.api.dto.LancamentoEstatisticaCategoria;
+import com.andrekunitz.money.api.dto.LancamentoEstatisticaDia;
 import com.andrekunitz.money.api.event.RecursoCriadoEvent;
 import com.andrekunitz.money.api.exceptionhendler.MoneyExceptionHandler;
 import com.andrekunitz.money.api.model.Lancamento;
@@ -41,6 +42,12 @@ public class LancamentoResource {
 
     @Autowired
     MessageSource messageSource;
+
+    @GetMapping("/estatisticas/por-dia")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+    public List<LancamentoEstatisticaDia> porDia() {
+        return lancamentoRepository.porDia(LocalDate.now());
+    }
 
     @GetMapping("/estatisticas/por-categoria")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
