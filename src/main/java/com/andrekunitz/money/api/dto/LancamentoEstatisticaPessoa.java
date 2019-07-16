@@ -1,18 +1,18 @@
 package com.andrekunitz.money.api.dto;
 
+import com.andrekunitz.money.api.model.Pessoa;
 import com.andrekunitz.money.api.model.TipoLancamento;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
-public class LancamentoEstatisticaDia {
+public class LancamentoEstatisticaPessoa {
     private TipoLancamento tipo;
-    private LocalDate dia;
+    private Pessoa pessoa;
     private BigDecimal total;
 
-    public LancamentoEstatisticaDia(TipoLancamento tipo, LocalDate dia, BigDecimal total) {
+    public LancamentoEstatisticaPessoa(TipoLancamento tipo, Pessoa pessoa, BigDecimal total) {
         this.tipo = tipo;
-        this.dia = dia;
+        this.pessoa = pessoa;
         this.total = total;
     }
 
@@ -24,12 +24,12 @@ public class LancamentoEstatisticaDia {
         this.tipo = tipo;
     }
 
-    public LocalDate getDia() {
-        return dia;
+    public Pessoa getPessoa() {
+        return pessoa;
     }
 
-    public void setDia(LocalDate dia) {
-        this.dia = dia;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
     public BigDecimal getTotal() {

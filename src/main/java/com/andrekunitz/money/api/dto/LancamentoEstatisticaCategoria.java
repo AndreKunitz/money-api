@@ -5,7 +5,6 @@ import com.andrekunitz.money.api.model.Categoria;
 import java.math.BigDecimal;
 
 public class LancamentoEstatisticaCategoria {
-
     private Categoria categoria;
     private BigDecimal total;
 
