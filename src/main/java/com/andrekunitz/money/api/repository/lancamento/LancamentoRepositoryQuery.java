@@ -2,6 +2,7 @@ package com.andrekunitz.money.api.repository.lancamento;
 
 import com.andrekunitz.money.api.dto.LancamentoEstatisticaCategoria;
 import com.andrekunitz.money.api.dto.LancamentoEstatisticaDia;
+import com.andrekunitz.money.api.dto.LancamentoEstatisticaPessoa;
 import com.andrekunitz.money.api.model.Lancamento;
 import com.andrekunitz.money.api.repository.filter.LancamentoFilter;
 import com.andrekunitz.money.api.repository.projection.ResumoLancamento;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LancamentoRepositoryQuery {
+    public List<LancamentoEstatisticaPessoa> porPessoa(LocalDate inicio, LocalDate fim);
 
     public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia);
 
