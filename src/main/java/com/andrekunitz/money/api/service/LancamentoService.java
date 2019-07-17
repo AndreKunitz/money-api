@@ -1,13 +1,26 @@
 package com.andrekunitz.money.api.service;
 
+import com.andrekunitz.money.api.dto.LancamentoEstatisticaPessoa;
 import com.andrekunitz.money.api.model.Lancamento;
 import com.andrekunitz.money.api.model.Pessoa;
 import com.andrekunitz.money.api.repository.LancamentoRepository;
 import com.andrekunitz.money.api.repository.PessoaRepository;
 import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Service
 public class LancamentoService {
@@ -17,6 +30,21 @@ public class LancamentoService {
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
+
+    public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws Exception {
+        List<LancamentoEstatisticaPessoa> dados = lancamentoRepository.porPessoa(inicio, fim);
+
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("DT_INICIO", Date.valueOf(inicio));
+        parametros.put("DT_FIM", Date.valueOf(fim));
+        parametros.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+        InputStream inputStream = this.getClass().getResourceAsStream("/relatorios/lancamentos_por_pessoa.jasper");
+
+        JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parametros, new JRBeanCollectionDataSource(dados));
+
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
 
     public Lancamento salvar(Lancamento lancamento) {
         Pessoa pessoa = pessoaRepository.findById(lancamento.getPessoa().getCodigo()).orElse(null);
