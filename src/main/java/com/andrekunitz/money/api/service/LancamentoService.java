@@ -12,6 +12,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -31,46 +32,41 @@ public class LancamentoService {
     @Autowired
     private LancamentoRepository lancamentoRepository;
 
+    @Scheduled(cron = "0 0 6 * * *")
+    public void avisarSobreLancamentosVencidos() {
+        System.out.println(">>>>>>>>>>>>>>>>> Método sendo executado...");
+    }
+
     public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws Exception {
         List<LancamentoEstatisticaPessoa> dados = lancamentoRepository.porPessoa(inicio, fim);
-
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("DT_INICIO", Date.valueOf(inicio));
         parametros.put("DT_FIM", Date.valueOf(fim));
         parametros.put("REPORT_LOCALE", new Locale("pt", "BR"));
-
         InputStream inputStream = this.getClass().getResourceAsStream("/relatorios/lancamentos_por_pessoa.jasper");
-
         JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parametros, new JRBeanCollectionDataSource(dados));
-
         return JasperExportManager.exportReportToPdf(jasperPrint);
     }
 
     public Lancamento salvar(Lancamento lancamento) {
         Pessoa pessoa = pessoaRepository.findById(lancamento.getPessoa().getCodigo()).orElse(null);
-
         if (pessoa == null || pessoa.isInativo()) {
             throw new PessoaInexistenteOuInativaException();
         }
-
         return lancamentoRepository.save(lancamento);
     }
 
     public Lancamento atualizar(Long codigo, Lancamento lancamento) {
         Lancamento lancamentoSalvo = buscarLancamentoExistente(codigo);
-
         if (!lancamento.getPessoa().equals(lancamentoSalvo.getPessoa())) {
             validarPessoa(lancamento);
         }
-
         BeanUtils.copyProperties(lancamento, lancamentoSalvo, "codigo");
-
         return lancamentoRepository.save(lancamentoSalvo);
     }
 
     private void validarPessoa(Lancamento lancamento) {
         Pessoa pessoa = pessoaRepository.findById(lancamento.getCodigo()).orElse(null);
-
         if (pessoa == null || pessoa.isInativo()) {
             throw new PessoaInexistenteOuInativaException();
         }
@@ -78,11 +74,9 @@ public class LancamentoService {
 
     private Lancamento buscarLancamentoExistente(Long codigo) {
         Lancamento lancamentoSalvo = lancamentoRepository.findById(codigo).orElse(null);
-
         if (lancamentoSalvo == null) {
             throw new IllegalArgumentException();
         }
-
         return lancamentoSalvo;
     }
 }

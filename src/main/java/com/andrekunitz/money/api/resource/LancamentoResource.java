@@ -52,7 +52,6 @@ public class LancamentoResource {
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate inicio,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fim) throws Exception {
         byte[] relatorio = lancamentoService.relatorioPorPessoa(inicio, fim);
-
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE).body(relatorio);
     }
 
@@ -84,7 +83,6 @@ public class LancamentoResource {
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
     public ResponseEntity<Lancamento> bucarPeloCodigo(@PathVariable Long codigo) {
         Lancamento lancamentoProcurado = lancamentoRepository.findById(codigo).orElse(null);
-
         return lancamentoProcurado != null ? ResponseEntity.ok(lancamentoProcurado) : ResponseEntity.notFound().build();
     }
 
@@ -93,7 +91,6 @@ public class LancamentoResource {
     public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
         Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getCodigo()));
-
         return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
     }
 
@@ -101,9 +98,7 @@ public class LancamentoResource {
     public ResponseEntity<Object> handlePessoaInexistenteOuInativaExcepton(PessoaInexistenteOuInativaException ex) {
         String menssagemUsuario = messageSource.getMessage("pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale());
         String menssagemDesenvolvedor = ex.toString();
-
         List<MoneyExceptionHandler.Erro> erros = Arrays.asList(new MoneyExceptionHandler.Erro(menssagemUsuario, menssagemDesenvolvedor));
-
         return ResponseEntity.badRequest().body(erros);
     }
 
