@@ -4,8 +4,10 @@ package com.andrekunitz.money.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +27,10 @@ public class Pessoa {
 
     @NotNull
     private Boolean ativo;
+
+    @Valid
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private List<Contato> contatos;
 
     public long getCodigo() {
         return codigo;
