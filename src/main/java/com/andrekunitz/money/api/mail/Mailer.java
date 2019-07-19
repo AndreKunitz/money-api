@@ -2,6 +2,8 @@ package com.andrekunitz.money.api.mail;
 
 //import com.andrekunitz.money.api.model.Lancamento;
 //import com.andrekunitz.money.api.repository.LancamentoRepository;
+import com.andrekunitz.money.api.model.Lancamento;
+import com.andrekunitz.money.api.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.context.event.ApplicationReadyEvent;
 //import org.springframework.context.event.EventListener;
@@ -14,6 +16,7 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class Mailer {
@@ -39,6 +42,20 @@ public class Mailer {
 //                variaveis);
 //        System.out.println("Terminado o envio de e-mail...");
 //    }
+
+    public void avisarSobreLancamentosVencidos(List<Lancamento> vencidos, List<Usuario> destinatarios) {
+        Map<String, Object> variaveis = new HashMap<>();
+        variaveis.put("lancamentos", vencidos);
+        List<String> emails = destinatarios.stream()
+                                                .map(u -> u.getEmail())
+                                                .collect(Collectors.toList());
+        this.enviarEmail(
+                "andrekunitz@gmail.com",
+                Arrays.asList("andrekunitz@gmail.com"),
+                "Testando",
+                "mail/aviso-lancamentos-vencidos",
+                variaveis);
+    }
 
     public void enviarEmail(String remetente, List<String> destinatarios, String assunto,
                             String template, Map<String, Object> variaveis) {
