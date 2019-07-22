@@ -1,5 +1,6 @@
 package com.andrekunitz.money.api.resource;
 
+import com.andrekunitz.money.api.dto.Anexo;
 import com.andrekunitz.money.api.dto.LancamentoEstatisticaCategoria;
 import com.andrekunitz.money.api.dto.LancamentoEstatisticaDia;
 import com.andrekunitz.money.api.event.RecursoCriadoEvent;
@@ -10,6 +11,7 @@ import com.andrekunitz.money.api.repository.filter.LancamentoFilter;
 import com.andrekunitz.money.api.repository.projection.ResumoLancamento;
 import com.andrekunitz.money.api.service.LancamentoService;
 import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaException;
+import com.andrekunitz.money.api.storage.S3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -37,26 +39,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/lancamentos")
 public class LancamentoResource {
-
     @Autowired
     LancamentoRepository lancamentoRepository;
-
     @Autowired
     LancamentoService lancamentoService;
-
     @Autowired
     ApplicationEventPublisher publisher;
-
     @Autowired
     MessageSource messageSource;
+    @Autowired
+    private S3 s3;
 
     @PostMapping("/anexo")
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
-    public String uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
-        OutputStream out = new FileOutputStream("C:\\Users\\Root\\Documents\\proj\\" + anexo.getOriginalFilename());
-        out.write(anexo.getBytes());
-        out.close();
-        return "ok";
+    public Anexo uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
+        String nome = s3.salvarTemporariamente(anexo);
+        return new Anexo(nome, s3.configurarUrl(nome));
     }
 
     @GetMapping("/relatorios/por-pessoa")
