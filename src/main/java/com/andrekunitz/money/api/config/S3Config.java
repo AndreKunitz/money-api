@@ -12,6 +12,7 @@ import com.amazonaws.services.s3.model.lifecycle.LifecycleFilter;
 import com.amazonaws.services.s3.model.lifecycle.LifecycleTagPredicate;
 import com.andrekunitz.money.api.config.property.MoneyApiProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -19,6 +20,7 @@ public class S3Config {
     @Autowired
     private MoneyApiProperty property;
 
+    @Bean
     public AmazonS3 amazonS3() {
         AWSCredentials credentials = new BasicAWSCredentials(
                 property.getS3().getAccessKeyId(),
