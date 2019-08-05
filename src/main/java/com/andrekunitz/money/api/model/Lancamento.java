@@ -1,11 +1,16 @@
 package com.andrekunitz.money.api.model;
 
+import com.andrekunitz.money.api.repository.listener.LancamentoAnexoListener;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@EntityListeners(LancamentoAnexoListener.class)
 @Entity
 @Table(name = "lancamento")
 public class Lancamento {
@@ -38,10 +43,21 @@ public class Lancamento {
     @JoinColumn(name = "codigo_categoria")
     private Categoria categoria;
 
+    @JsonIgnoreProperties("contatos")
     @NotNull
     @ManyToOne
     @JoinColumn(name = "codigo_pessoa")
     private Pessoa pessoa;
+
+    private String anexo;
+
+    @Transient
+    private String urlAnexo;
+
+    @JsonIgnore
+    public boolean isReceita() {
+        return TipoLancamento.RECEITA.equals(this.tipo);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -126,5 +142,21 @@ public class Lancamento {
 
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
+    }
+
+    public String getAnexo() {
+        return anexo;
+    }
+
+    public void setAnexo(String anexo) {
+        this.anexo = anexo;
+    }
+
+    public String getUrlAnexo() {
+        return urlAnexo;
+    }
+
+    public void setUrlAnexo(String urlAnexo) {
+        this.urlAnexo = urlAnexo;
     }
 }
