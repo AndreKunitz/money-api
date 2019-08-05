@@ -1,5 +1,6 @@
 package com.andrekunitz.money.api.service;
 
+import com.andrekunitz.money.api.config.property.MoneyApiProperty;
 import com.andrekunitz.money.api.dto.LancamentoEstatisticaPessoa;
 import com.andrekunitz.money.api.mail.Mailer;
 import com.andrekunitz.money.api.model.Lancamento;
@@ -9,6 +10,7 @@ import com.andrekunitz.money.api.repository.LancamentoRepository;
 import com.andrekunitz.money.api.repository.PessoaRepository;
 import com.andrekunitz.money.api.repository.UsuarioRepository;
 import com.andrekunitz.money.api.service.exception.PessoaInexistenteOuInativaException;
+import com.andrekunitz.money.api.storage.S3;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -19,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 import java.sql.Date;
@@ -40,7 +43,8 @@ public class LancamentoService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private Mailer mailer;
-
+    @Autowired
+    private S3 s3;
 
 //    @Scheduled(fixedDelay = 1000 * 60 * 30)
     @Scheduled(cron = "0 0 6 * * *")
@@ -76,9 +80,15 @@ public class LancamentoService {
 
     public Lancamento salvar(Lancamento lancamento) {
         Pessoa pessoa = pessoaRepository.findById(lancamento.getPessoa().getCodigo()).orElse(null);
+
         if (pessoa == null || pessoa.isInativo()) {
             throw new PessoaInexistenteOuInativaException();
         }
+
+        if (StringUtils.hasText(lancamento.getAnexo())) {
+            s3.salvar(lancamento.getAnexo());
+        }
+
         return lancamentoRepository.save(lancamento);
     }
 

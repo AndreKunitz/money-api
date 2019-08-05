@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 @Component
@@ -22,26 +23,33 @@ public class S3 {
     private AmazonS3 amazonS3;
 
     public String salvarTemporariamente(MultipartFile arquivo) {
-        AccessControlList accessControlList = new AccessControlList();
-        accessControlList.grantPermission(GroupGrantee.AllUsers, Permission.Read);
+        AccessControlList acl = new AccessControlList();
+        acl.grantPermission(GroupGrantee.AllUsers, Permission.Read);
+
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(arquivo.getContentType());
         objectMetadata.setContentLength(arquivo.getSize());
+
         String nomeUnico = gerarNomeUnico(arquivo.getOriginalFilename());
+
         try {
             PutObjectRequest putObjectRequest = new PutObjectRequest(
                     property.getS3().getBucket(),
                     nomeUnico,
                     arquivo.getInputStream(),
-                    objectMetadata
-            ).withAccessControlList(accessControlList);
+                    objectMetadata)
+                    .withAccessControlList(acl);
+
             putObjectRequest.setTagging(new ObjectTagging(
-                    Arrays.asList(new Tag("expirar", "true"))
-            ));
+                    Arrays.asList(new Tag("expirar", "true"))));
+
             amazonS3.putObject(putObjectRequest);
+
             if (logger.isDebugEnabled()) {
-                logger.debug("Arquivo {} enviado com sucesso para o S3.", arquivo.getOriginalFilename());
+                logger.debug("Arquivo {} enviado com sucesso para o S3.",
+                        arquivo.getOriginalFilename());
             }
+
             return nomeUnico;
         } catch (IOException e) {
             throw new RuntimeException("Problemas ao tentar enviar o arquivo para o S3.", e);
@@ -49,10 +57,20 @@ public class S3 {
     }
 
     public String configurarUrl(String objeto) {
-        return "\\\\" + property.getS3().getBucket() + ".s3.amazonaws.com/" + objeto;
+        return "\\\\" + property.getS3().getBucket() +
+                ".s3.amazonaws.com/" + objeto;
+    }
+
+    public void salvar(String objeto) {
+        SetObjectTaggingRequest setObjectTaggingRequest = new SetObjectTaggingRequest(
+                property.getS3().getBucket(),
+                objeto,
+                new ObjectTagging(Collections.emptyList()));
+
+        amazonS3.setObjectTagging(setObjectTaggingRequest);
     }
 
     private String gerarNomeUnico(String originalFilename) {
-        return UUID.randomUUID().toString() + "_" +originalFilename;
+        return UUID.randomUUID().toString() + "_" + originalFilename;
     }
 }
