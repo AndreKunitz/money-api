@@ -1,5 +1,6 @@
 package com.andrekunitz.money.api.model;
 
+import com.andrekunitz.money.api.repository.listener.LancamentoAnexoListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@EntityListeners(LancamentoAnexoListener.class)
 @Entity
 @Table(name = "lancamento")
 public class Lancamento {
